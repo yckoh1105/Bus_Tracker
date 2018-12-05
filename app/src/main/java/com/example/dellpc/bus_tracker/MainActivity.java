@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.StrictMode;
+import android.support.v4.view.WindowCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,11 +62,20 @@ public class MainActivity extends AppCompatActivity {
     private int routeID;
     private ProgressDialog progressBar;
     private ArrayList<String> aaa;
+    private TextView textViewBusCount;
+    private int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+        getWindow().requestFeature(WindowCompat.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.app_name));
+        setSupportActionBar(toolbar);
         route_spinner = (Spinner) findViewById(R.id.route_spinner);
         //loadSpinner();
         l = (ListView) findViewById(R.id.busList);
@@ -129,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
             public void deliveryComplete(IMqttDeliveryToken token) {
             }
         });
+
+        textViewBusCount = findViewById(R.id.textViewBusCount);
+
     }
 
     @Override
@@ -175,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadSpinner(){
+        count = 0;
         String phpUrl = Constant.UrlGetRoute;
         ArraySpinner.clear();
         com.android.volley.RequestQueue queue = Volley.newRequestQueue(this);
@@ -225,15 +240,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initializeSpinner(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ArraySpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        route_spinner.setAdapter(adapter);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ArraySpinner);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getApplicationContext(),ArraySpinner);
+        route_spinner.setAdapter(customSpinnerAdapter);
         route_spinner.setSelection(0);
         routeID = RouteList.get(0).getRouteId();
+        textViewBusCount.setText(getString(R.string.no_bus));
 
         route_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    textViewBusCount.setText(getString(R.string.no_bus));
+                    count = 0;
                     unsubscribeTrackingTopic(Integer.toString(routeID));
                     routeID = RouteList.get(i).getRouteId();
                     subscribeTrackingTopic(Integer.toString(routeID));
@@ -303,6 +322,9 @@ public class MainActivity extends AppCompatActivity {
         //BusAdapter listAdapter = new BusAdapter(this,R.layout.item_bus_list,busOnRouteList);
         BusAdapter listAdapter = new BusAdapter();
         l.setAdapter(listAdapter);
+        if(l.getAdapter().getCount() == 0){
+            textViewBusCount.setText(getString(R.string.no_bus));
+        }
     }
 
     class BusAdapter extends BaseAdapter{
@@ -324,12 +346,24 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            count = 0;
+
             if(busOnRouteList.size()!=0) {
                 convertView = getLayoutInflater().inflate(R.layout.item_bus_list, null);
                 TextView txtSpeed = (TextView) convertView.findViewById(R.id.tvSpeed);
                 TextView txtPlateNumber = (TextView) convertView.findViewById(R.id.tvPlateNumber);
                 txtPlateNumber.setText(busOnRouteList.get(position).getBusPlateNum());
                 txtSpeed.setText(String.format("%.2f",busOnRouteList.get(position).getSpeed()*3.6));
+                count = busOnRouteList.size();
+//                if (count < 1) {
+//
+//                if(count == 0){
+//                    textViewBusCount.setText(getString(R.string.no_bus));
+                if (count == 1) {
+                    textViewBusCount.setText("" + count + " " + getString(R.string.single_bus));
+                } else {
+                    textViewBusCount.setText("" + count + " " + getString(R.string.plural_bus));
+                }
             }
             return convertView;
         }
@@ -353,5 +387,11 @@ public class MainActivity extends AppCompatActivity {
             ex.printStackTrace();
             return false;
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

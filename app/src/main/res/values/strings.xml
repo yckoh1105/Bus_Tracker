@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Bus_Tracker</string>
+    <string name="app_name">TARC EzTrack</string>
+    <string name="version">Beta Version</string>
+    <string name="no_bus">No bus</string>
+    <string name="single_bus">bus</string>
+    <string name="plural_bus">buses</string>
 </resources>
