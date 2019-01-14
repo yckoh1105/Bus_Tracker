@@ -1,4 +1,4 @@
-package com.example.dellpc.bus_tracker;
+package my.edu.tarc.tracker;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+
+import com.example.dellpc.tracker.R;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.dellpc.bus_tracker;
+package my.edu.tarc.tracker;
 
 import android.content.Context;
 import android.graphics.Color;

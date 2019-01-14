@@ -1,4 +1,4 @@
-package com.example.dellpc.bus_tracker;
+package my.edu.tarc.tracker;
 
 
 import android.content.Intent;
@@ -9,7 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-import com.example.dellpc.bus_tracker.R;
+
+import com.example.dellpc.tracker.R;
 
 
 public class SplashScreen extends AppCompatActivity {

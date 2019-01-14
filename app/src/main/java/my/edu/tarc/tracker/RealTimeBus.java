@@ -1,4 +1,4 @@
-package com.example.dellpc.bus_tracker;
+package my.edu.tarc.tracker;
 
 /**
  * Created by Dell PC on 9/10/2018.
